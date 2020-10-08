@@ -1,43 +1,28 @@
-import React, {Component} from 'react';
+import React from 'react';
 
-import { Link , Redirect} from "react-router-dom";
+import { Link , Redirect,useHistory} from "react-router-dom";
 import {NavLink} from 'react-router-dom';
-
+import {useSelector,useDispatch} from 'react-redux'
+import {logout} from './actions/userAction'
 export default function Header(){
-  
-
-
-
-
-    
-
-
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
+  const dispatch = useDispatch()
+  const history= useHistory()
  
-  const handleLogout=event=>{
-    localStorage.removeItem('token')
-    localStorage.removeItem('userType')
-    localStorage.removeItem('id')
-    localStorage.removeItem('email')
-    console.log("h")
-    window.location.href="/"
-    
+ const handleLogout=e=>{
+   dispatch(logout())
 
-  }
+ }
  
-  React.useEffect(()=>{
-  //document.getElementById("body").style.backgroundColor="#EAF0F1";
-},[])
+ React.useEffect(()=>{
+
+ },[userInfo])
+
 return(
-      <React.Fragment>
-
-
-
-
-
-
-
+<React.Fragment>
 <nav className="navbar navbar-expand-lg navbar-light bg-dark">
-  <a className="navbar-brand  text-light" href="#">JOBOUT</a>
+  JOBOUT
   <button className="navbar-toggler btn-light" type="button"  
   data-toggle="collapse" data-target="#navbarSupportedContent" 
   aria-controls="navbarSupportedContent" 
@@ -45,14 +30,9 @@ return(
     <span className="navbar-toggler-icon bg-light "></span>
   </button>
 
-  <div className="collapse navbar-collapse" id="navbarSupportedContent">
+<div className="collapse navbar-collapse" id="navbarSupportedContent">
     
-      
-
-
-
-
-{!localStorage.getItem("token") ? (
+{!userInfo && (
 <ul className="navbar-nav ml-auto ">    
         <li className="nav-item"><Link className="nav-link btnColor btn mb-2 text-light m-2" to="/SignupUser">User</Link>
         </li>
@@ -60,62 +40,39 @@ return(
         <li className="nav-item"><Link className="nav-link btnColor btn text-light m-2" to="/SignupCompany">Recruiter</Link>
         </li>
 </ul>
-  ) : 
-(null)}
-      
-
-
-
-
-{localStorage.getItem("token") && localStorage.getItem("userType")==="user" && (<>
-  <ul className="navbar-nav mr-auto">
-       <li className="nav-item"><Link className="nav-link btnColor btn mb-2 text-light m-2" to="/JobsPosted">Jobs</Link>
-        </li>
-
-        <li className="nav-item"><Link className="nav-link btnColor btn text-light m-2" to={`/JobsApplied/${localStorage.getItem("id")}`}>Jobs Applied</Link>
-        </li>             
-</ul>
-<ul className="navbar-nav ml-auto ">
-<li className="nav-item text-light m-2">
-           {localStorage.getItem("email")}
-           
-        </li>
-<li className="nav-item text-light m-2" onClick={handleLogout}> LogOut
-        </li>
-</ul>
-</>
 )}
-
-
-{localStorage.getItem("token") && localStorage.getItem("userType")==="company"  ? (<>
+{userInfo && userInfo.userType=="user" && (<>
 <ul className="navbar-nav mr-auto">
-       <li className="nav-item"><Link className="nav-link btnColor btn mb-2 text-light m-2" to={`/CompanyJobs/${localStorage.getItem("id")}`}>Jobs Posted</Link>
-        </li>
+      <li className="nav-item"><Link className="nav-link btnColor btn mb-2 text-light m-2" to="/JobsPosted">Jobs</Link>
+      </li>
 
-        <li className="nav-item"><Link className="nav-link btnColor btn text-light m-2" to="/CreateJob">Create Job</Link>
-        </li>             
+      <li className="nav-item"><Link className="nav-link btnColor btn text-light m-2" to={`/JobsApplied`}>Jobs Applied</Link>
+      </li>             
 </ul>
 <ul className="navbar-nav ml-auto ">
-        <li className="nav-item text-light m-2">
-           {localStorage.getItem("email")}
-           
+      <li className="nav-item text-light m-2">{userInfo.email}
+      </li>
+      <li className="nav-item text-light m-2" onClick={handleLogout}> LogOut
+      </li>
+</ul>
+
+</>)}
+{userInfo && userInfo.userType=="company" &&(<>
+<ul className="navbar-nav mr-auto">
+      <li className="nav-item"><Link className="nav-link btnColor btn mb-2 text-light m-2" to={`/CompanyJobs/`}>Jobs Posted</Link>
+      </li>
+      <li className="nav-item"><Link className="nav-link btnColor btn text-light m-2" to="/CreateJob">Create Job</Link>
+      </li>             
+</ul>
+<ul className="navbar-nav ml-auto ">
+        <li className="nav-item text-light m-2">{userInfo.email}
         </li>
         <li className="nav-item text-light m-2" onClick={handleLogout}> LogOut
         </li>
 </ul>
-  
-      </>
-):(null)}
-
-     
-  
-    
-  </div>
+</>)}    
+</div>
 </nav>
-
-
-
-
-      </ React.Fragment>
+</ React.Fragment>
       );
   }

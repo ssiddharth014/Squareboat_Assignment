@@ -1,57 +1,54 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import Header from './Header'
-import axios from 'axios'
+import Header from '../Header'
+import { useSelector, useDispatch } from 'react-redux';
+import {CompanyJobs} from '../actions/jobsAction'
 
-import swal from 'sweetalert';
 export default function JobsPosted()
 {
-    const [all, setall] = React.useState([]);
-    const [loading,setloading] =React.useState(true)
-    const [status,setstatus] =React.useState(false)
+  const dispatch= useDispatch();
+  const Jobs = useSelector((state) => state.companyJobs);
+  const userSignin = useSelector(state => state.userSignin);
+  const {  userInfo } = userSignin;
+  const{loading,error,jobs}=Jobs;
     React.useEffect(()=>{
-        setloading(true)
+        
+        dispatch(CompanyJobs(userInfo._id))
 
-         async function Jobs(){
-                 let All= await  axios.get(`https://jobout1.herokuapp.com/users/allJobs`)
-                 console.log(All)
-                 setall(All.data.jobs)
-                 setloading(false)
-        }
-        Jobs()
     },[])
     if(loading){return <>
-    <div className="spinner-grow text-primary" role="status">
-  <span className="sr-only">Loading...</span>
-</div>
-<div className="spinner-grow text-secondary" role="status">
-  <span className="sr-only">Loading...</span>
-</div>
-<div className="spinner-grow text-success" role="status">
-  <span className="sr-only">Loading...</span>
-</div>
-<div className="spinner-grow text-danger" role="status">
-  <span className="sr-only">Loading...</span>
-</div>
-<div className="spinner-grow text-warning" role="status">
-  <span className="sr-only">Loading...</span>
-</div>
-<div className="spinner-grow text-info" role="status">
-  <span className="sr-only">Loading...</span>
-</div>
-<div className="spinner-grow text-light" role="status">
-  <span className="sr-only">Loading...</span>
-</div>
-<div className="spinner-grow text-dark" role="status">
-  <span className="sr-only">Loading...</span>
-</div></>}
+        <div className="spinner-grow text-primary" role="status">
+      <span className="sr-only">Loading...</span>
+    </div>
+    <div className="spinner-grow text-secondary" role="status">
+      <span className="sr-only">Loading...</span>
+    </div>
+    <div className="spinner-grow text-success" role="status">
+      <span className="sr-only">Loading...</span>
+    </div>
+    <div className="spinner-grow text-danger" role="status">
+      <span className="sr-only">Loading...</span>
+    </div>
+    <div className="spinner-grow text-warning" role="status">
+      <span className="sr-only">Loading...</span>
+    </div>
+    <div className="spinner-grow text-info" role="status">
+      <span className="sr-only">Loading...</span>
+    </div>
+    <div className="spinner-grow text-light" role="status">
+      <span className="sr-only">Loading...</span>
+    </div>
+    <div className="spinner-grow text-dark" role="status">
+      <span className="sr-only">Loading...</span>
+    </div></>}
+
     return(
  <>
     <Header/>
     <div className="container-fluid mt-4" id="accordionExample">
         <div className="row d-flex justify-content-around">
-            {all.length==0 ? (<h1 className="text-primary">No Jobs Posted yet</h1>) : (null)}
-                {all.map((ann,index) => {
+            {jobs && jobs.length==0 ? (<h1 className="text-primary">No Jobs Posted yet</h1>) : (null)}
+                {jobs && jobs.map((ann,index) => {
                     return ( <div key={index} className="col-lg-3 col-md-4 col-8  ml-2 mt-2 mb-2  text-dark newcard">
                                
                                 {
@@ -72,7 +69,7 @@ export default function JobsPosted()
                             Applications <span className="ml-1">{ann.applications.length}</span>
                             </h6>
                            <div className="d-flex justify-content-center">
-                               <Link to={`/JobDetails/${ann._id}/Details`}>
+                               <Link to={`/JobDetails/${ann._id}/myJobs`}>
                                <button className="btn btnColor text-white rounded-pill mb-2" >View Details</button>
                                </Link>
                             

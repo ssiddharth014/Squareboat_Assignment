@@ -2,48 +2,58 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import JobCreationSteps from './index'
 import Header from '../Header'
-import axios from 'axios'
 import swal from 'sweetalert';
+import {useSelector,useDispatch} from 'react-redux'
+import {CreateJob} from '../actions/jobsAction'
+import {useHistory} from 'react-router-dom'
 
 export default function Additional({match})
 {
-    const [add,setadd]= React.useState('')
-    const  handleSubmit=async (e)=>{
-        e.preventDefault();
-        console.log("yup");
+  const[add,setadd]= React.useState('')
+  const dispatch= useDispatch();
+  const createdJob=useSelector(state=>state.JobCreate)
+  const userSignin = useSelector(state => state.userSignin);
+  const {userInfo } = userSignin;
+  const {loading,error,job}=createdJob;
+  const history= useHistory();
+  const  handleSubmit=async (e)=>{
+    document.getElementById("cover").style.display="block"
 
+  dispatch(CreateJob(match.params.id1,match.params.id2,match.params.id3,add,userInfo._id))
 
-        let Job=await axios.post(`https://jobout1.herokuapp.com/users/createJob`,
-        {"name":`${match.params.id1}`,
-        "id":localStorage.getItem("id"),
-        "description":`${match.params.id2}`,"requirements":`${match.params.id3}`,"additionals":`${add}`});
-        
-        
-        
-        if(Job.data.data._id)
-        {
-            swal({
-                title: "Job Added",
-                text: "Congratulations",
-                icon: "success",
-              });
-        }
-        else{
-            swal({
-                title: "Job Not Added",
-                text: "Try Again",
-                icon: "error",
-              });
-        }
-        
-console.log(Job)
+      
+    e.preventDefault();
+   
 
         
     }
+    if(job)
+{
+  document.getElementById("cover").style.display="none"
+  swal({
+    title: "Job Added",
+    text: "Congratulations",
+    icon: "success",
+  });
+  history.push("/CompanyJobs")
+
+}
+ else if(error)
+ {
+  document.getElementById("cover").style.display="none"
+      swal({
+          title: "Job Not Added",
+          text: "Try Again",
+          icon: "error",
+        });
+        history.push("/CreatedJob")
+  }
     
+   
     return (
         <>
         <Header/>
+        <div id="cover"></div>
         <JobCreationSteps step1 step2 step3 step4 step5></JobCreationSteps>
         <div className="form">
       <form >
@@ -58,7 +68,10 @@ console.log(Job)
           </label>
             <input type="text" name="title" id="title" onChange={(e)=>setadd(e.target.value)}>
             </input>
+            <button className="btn btn-primary mt-3">+</button>
+
           </li>
+          
           
 
 

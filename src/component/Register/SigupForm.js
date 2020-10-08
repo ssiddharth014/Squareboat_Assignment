@@ -1,9 +1,48 @@
 import React from 'react'
+import {Redirect} from 'react-router-dom'
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import axios from 'axios'
 import swal from 'sweetalert';
+import { useSelector, useDispatch } from 'react-redux';
+import {useHistory} from 'react-router-dom'
+import {register} from '../actions/userAction'
 export default function SignUpForm(props)
 {
+  const[state,setstate]= React.useState(false)
+  const dispatch= useDispatch();
+  const userRegister = useSelector(state => state.userRegister);
+  const { loading, userInfo, error } = userRegister;
+  const history = useHistory();
+
+
+  React.useEffect(() => {
+    if (userInfo&& userInfo.userType=="user") 
+    {
+      setstate(false)
+      console.log("job posted user",userInfo)
+      history.push('/LoginUser')
+    }
+    else if(userInfo&& userInfo.userType=="company") 
+    {
+      setstate(false)
+      console.log("job posted")
+      history.push('/LoginCompany')
+    }
+    else if(error)
+    {
+      console.log(state)
+      swal({
+              title: "Registration UnSuccesful",
+              text: "Retry",
+              icon: "warning",
+            });
+
+    }
+    
+    return () => {
+      //
+    };
+  }, [userInfo,error,loading,history]);
+  
     return (
 <>
 
@@ -63,34 +102,9 @@ export default function SignUpForm(props)
          return errors;
        }}
        onSubmit={(values,{ setSubmitting }) => {
-         async function reg(){
-           console.log(values)
-          let re=await axios.post(`https://jobout1.herokuapp.com/users/${props.userType}`,{values});
-          console.log(re)
-          if(re.data.token)
-          {
-            swal({
-              title: "Registration Succesful",
-              text: "Login, Post Job and hire",
-              icon: "success",
-            });
-            
-          }
-          else
-          {
-            swal({
-              title: "Registration UnSuccesful",
-              text: "Retry",
-              icon: "warning",
-            });
 
-          }
-          setSubmitting(false)
-
-         }
-         reg()
-        
-         
+        dispatch(register({values},props.userType))
+          setSubmitting(false) 
        }}
      >
        {({ isSubmitting }) => (

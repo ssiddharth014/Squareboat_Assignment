@@ -25,6 +25,7 @@ export default function Requirements({match})
           </label>
             <input type="text" name="title" id="title" onChange={(e)=>setreq(e.target.value)}>
             </input>
+            <button className="btn btn-primary mt-3">+</button>
           </li>
           
 

@@ -13,28 +13,20 @@ const history =useHistory()
   return (
     
    
-<div style={{"margin-top":"15vh"}}  className="d-flex justify-content-center ">
+<div style={{"marginTop":"15vh"}}  className="d-flex justify-content-center ">
     
     <span className="card large">
     
     <em><h3 className="text-center">Welcome Back !</h3></em>
     <h6  className="text-center mr-2">New User ? <Link  to='/SignUpCompany'> Sign Up</Link><br/>
     </h6>
-       <div>
-       
-        <div className="  mt-2 mb-2   " >
-        <div>
-    
-     <LoginForm userType="RecruiterSignIn"/>
+  <div>     
+  <div className="  mt-2 mb-2   " >
+   <div>
+    <LoginForm userType="company"/>
    </div>
-          
-        
-       
-         
-      </div>
-     
-      
-    </div>
+  </div>
+  </div>
   </span><button 
           style={{"height":"5vh"}} className="btn btn-danger"onClick={()=>history.goBack()}>
           X

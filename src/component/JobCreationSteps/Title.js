@@ -12,7 +12,7 @@ export default function Title()
         <>
         <Header/>
         <div style={{width:"100vw"}}>
-        <JobCreationSteps step1 step2></JobCreationSteps>
+        <JobCreationSteps step1 ></JobCreationSteps>
         <div className="form col-lg-10 col-md-8 col-10">
       <form >
         <ul className="form-container small">
@@ -26,6 +26,7 @@ export default function Title()
           </label>
             <input type="text" name="title" id="title" value={title} placeholder={title} onChange={(e)=>setTitle(e.target.value)}>
             </input>
+            <button className="btn btn-primary mt-3">+</button>
           </li>
           
 
@@ -47,25 +48,14 @@ export default function Title()
              </Link>
                  
              )}
-                
-              
-
-              </div>
-             
-              
-              
-            
-          </li>
+              </div>            
+           </li>
 
         </ul>
       </form>
     </div>
 
-        </div>
-        
-        
-
-        
+        </div>        
         </>
     )
 }

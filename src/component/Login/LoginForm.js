@@ -1,10 +1,47 @@
 import React, {useEffect} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import axios from 'axios'
+import {signin} from '../actions/userAction'
 import {Link} from 'react-router-dom'
 import swal from 'sweetalert';
+import {useSelector,useDispatch} from 'react-redux'
+import {useHistory} from 'react-router-dom'
+
+
 export default function LoginForm(props)
 {
+  const dispatch= useDispatch();
+  const userSignin = useSelector(state => state.userSignin);
+  const { loading, userInfo, error } = userSignin;
+  const history = useHistory();
+
+  React.useEffect(()=>{
+    
+    if(userInfo && userInfo.userType=="user")
+    {
+      console.log("info",userInfo,history)
+      history.push('/JobsPosted')
+    }
+    else if(userInfo && userInfo.userType=="company")
+    {
+      console.log("info",userInfo)
+      history.push('/CreateJob')
+
+    }
+    else if(error)
+    {
+      
+      swal({
+        title: "Login UnSuccesful",
+        text: "Retry",
+        icon: "warning",
+      });
+
+    }
+    return () => {
+      //
+    };
+
+  },[userInfo,loading,error])
     return (
         <>
         <Formik
@@ -26,40 +63,11 @@ export default function LoginForm(props)
          return errors;
        }}
        onSubmit={(values, { setSubmitting }) => {
-        async function reg(){
-          console.log(values)
-         let re=await axios.post(`https://jobout1.herokuapp.com/users/${props.userType}`,{values});
-         console.log(re.data)
-         if(re.data.token)
-         {
-           localStorage.setItem("token",re.data.token)
-           localStorage.setItem("userType",re.data.userType)
-           localStorage.setItem("id",re.data._id)
-           localStorage.setItem("email",re.data.email)
-           if(re.data.userType=="user")
-           {
-             window.location="/JobsPosted"
-           }
-           else if(re.data.userType=="company")
-           {
-             window.location=`/CompanyJobs/${localStorage.getItem("id")}`
-           }
-           
-         }
-         else
-         {
-           swal({
-             title: "Login UnSuccesful",
-             text: "Retry",
-             icon: "warning",
-           });
-
-         }
-         setSubmitting(false)
-
-        }
-        reg()
-         
+         console.log(values)
+        //Cookie.remove("userInfo");
+         dispatch(signin({values},props.userType))
+      
+         setSubmitting(false)         
        }}
      >
        {({ isSubmitting }) => (

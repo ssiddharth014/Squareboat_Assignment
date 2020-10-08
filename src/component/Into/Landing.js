@@ -1,43 +1,16 @@
 import React,{useState,useEffect} from 'react';
 import {Link} from "react-router-dom";
-//import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-//import CancelIcon from '@material-ui/icons/Cancel';
-//import Button from '@material-ui/core/Button';
-//import CircularStatic from './Loading.js'
-import Header from './Header.js'  
-//import PlaylistAddCheckRoundedIcon from '@material-ui/icons/PlaylistAddCheckRounded';
-//import VerifiedUserRoundedIcon from '@material-ui/icons/VerifiedUserRounded';
-//import AcUnitRoundedIcon from '@material-ui/icons/AcUnitRounded';
-//import Profile from "./Profile.js";
-//import CompanyProfile from "./CompanyProfile.js"
-//import Footer from "./FooterComponent.js"
+import Header from '../Header'  
 export default function LandingPage() {
     const [rules,setrules] =React.useState([]);
     const[loading,setloading] =React.useState(false)
 
-
-// const openNav=event=>{
-//     document.getElementById(event).style.display="block";
-//   }
-// const closenav=event=>{
-    
-//     document.getElementById(event).style.display="none";
-//   }
-
-
  useEffect(()=>{
   //document.getElementById("body").style.backgroundColor="#EAF0F1";
   setloading(true)
-     
-
+  
             },[])
-
-
-
-
-
-
-    return(
+ return(
     <>
    
 

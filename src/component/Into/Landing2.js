@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Header from './Header.js'
+import Header from '../Header.js'
 import { Link , Redirect} from "react-router-dom";
-function   Landing2() {
+function  Landing2() {
    
 
     const [profile, setprofile] = React.useState([])

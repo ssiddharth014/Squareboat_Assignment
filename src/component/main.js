@@ -1,33 +1,30 @@
 import React from 'react';
-import {Switch, Route, Redirect,withRouter} from 'react-router-dom';
-import { TransitionGroup, CSSTransition } from "react-transition-group";
-import styled from "styled-components";
-import Login from './first-page/login'
-import Register from './first-page/signup'
-import Landing from './Landing'
-import Landing2 from './Landing2'
-import SignUpUser from './SignUpUser'
-import LoginUser from './LoginUser'
-import SignUpCompany from './SignUpCompany'
-import LoginCompany from './LoginCompany'
+import {Switch, Route, Redirect} from 'react-router-dom';
+import Landing from './Into/Landing'
+import Landing2 from './Into/Landing2'
+import SignUpUser from './Register/SignUpUser'
+import LoginUser from './Login/LoginUser'
+import SignUpCompany from './Register/SignUpCompany'
+import LoginCompany from './Login/LoginCompany'
 import Title from './JobCreationSteps/Title'
 import Description from './JobCreationSteps/Description'
 import Requirements from './JobCreationSteps/Requirements'
 import Additional from './JobCreationSteps/Additional'
-import JobsPosted from './JobsPosted'
-import JobDetails from './JobDetails'
-import CompanyJobs from './CompanyJobs'
-import JobsApplied from './JobsApplied'
-import ForgotPassword from './forgotPassword'
- function Main(){
+import JobsPosted from './Jobs/JobsPosted'
+import JobDetails from './Jobs/JobDetails'
+import CompanyJobs from './Jobs/CompanyJobs'
+import JobsApplied from './Jobs/JobsApplied'
+import ForgotPassword from './forgotPassword/forgotPassword'
+import { useSelector } from 'react-redux';
+function Main(){
+    const userSignin = useSelector((state) => state.userSignin);
+    const { userInfo } = userSignin;
     
     return(
     <>
     
     <Switch >
-        {!localStorage.getItem("token")?(<>
-            <Route exact path="/login" component={Login} />
-        <Route exact path="/Signup" component={Register} />
+        {!userInfo && (<>
         <Route exact path="/" component={Landing} />
         <Route exact path="/Try" component={Landing2} />
         <Route exact path="/SignUpUser" component={SignUpUser} />
@@ -36,34 +33,22 @@ import ForgotPassword from './forgotPassword'
         <Route exact path="/LoginCompany" component={LoginCompany} />
         <Route exact path="/ForgotPassword" component={ForgotPassword} />
         <Redirect to="/" />
-        </>):(null)}
-        {localStorage.getItem("token") && localStorage.getItem("userType")=="user" ? (<>
-            <Route exact path="/JobsPosted" component={JobsPosted} />
+        </>)}
+        {userInfo && userInfo.userType=="user" && (<>
+        <Route exact path="/JobsPosted" component={JobsPosted} />
         <Route  exact path="/JobDetails/:id/:id1" component={JobDetails}/>
-        
-        <Route exact path="/JobsApplied/:id" component={JobsApplied}/>
-        <Redirect to="/JobsPosted"/>
-        </>):(null)}
-            <>
-            {localStorage.getItem("token") && localStorage.getItem("userType")=="company"?(<>
-            <Route exact path="/CreateJob" component={Title} />
+        <Route exact path="/JobsApplied" component={JobsApplied}/>
+        <Redirect to="/JobsPosted" />
+        </>)}
+        {userInfo && userInfo.userType=="company" &&(<>
+        <Route exact path="/CreateJob" component={Title} />
         <Route exact path="/CreateJob/:id1" component={Description} />
         <Route exact path="/CreateJob/:id1/:id2" component={Requirements} />
         <Route  path="/CreateJob/:id1/:id2/:id3" component={Additional} />
-        
         <Route  exact path="/JobDetails/:id/:id1" component={JobDetails}/>
-        <Route exact path="/CompanyJobs/:id" component={CompanyJobs}/>
-        <Redirect to="/createJob" />
-        
-            
-            
-            </>):(null) }
-        
-
-
-            </>
-        
-        
+        <Route exact path="/CompanyJobs" component={CompanyJobs}/>
+        <Redirect to="/CreateJob" />
+        </>)}    
     </Switch>
     
 

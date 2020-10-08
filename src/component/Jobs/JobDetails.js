@@ -1,55 +1,59 @@
-import React, { useState, useEffect } from "react";
-
-import { Link } from 'react-router-dom';                     //formfeedback 
-import Header from './Header'
-import axios from 'axios'
-
+import React, { useState} from "react";
+import Header from '../Header'
 import swal from 'sweetalert';
+import { useSelector, useDispatch } from 'react-redux';
+import {JobDetail,JobApply} from '../actions/jobsAction'
 
 export default function JobDetails({match}) {
 
+const dispatch= useDispatch();
+const jobInfo = useSelector((state) => state.detailJob);
+const userApply= useSelector((state)=>state.apply)
+const userSignin = useSelector(state => state.userSignin);
+const {  userInfo } = userSignin;
+const{loading,error,jobDetail}=jobInfo;
+const{loading_apply, apply,loading_error}=userApply
 
 
 
 const [all, setall] = useState({});
 const [users,setUsers] =useState([])
-const [loading,setloading]=useState(true)
+
 const [applyStatus,setapplyStatus]= useState(false)
-const[status,setStatus]= useState()
+const[status,setStatus]= useState(false)
 const handleApply=async (e)=>{
     e.preventDefault();
-    let Apply= await  axios.post(`https://jobout1.herokuapp.com/users/JobApply/${match.params.id}/${localStorage.getItem("id")}`)
-    console.log(Apply)
-    if(Apply)
-    {
-        swal({
-            title: "Congratulations",
-            text: "Applied Succesfully",
-            icon: "success",
-          });
+    dispatch(JobApply(match.params.id,userInfo._id))
+    
+    console.log(apply)
+    if(apply)
+{
+  setStatus(!status)  
+  return(
+    
+    
+    swal({
+        title: "Congratulations",
+        text: "Applied Succesfully",
+        icon: "success",
+      })
 
-        setStatus(!status)
+  )
+ 
+}
 
-    }
 
 
 }
 React.useEffect(()=>{
     setapplyStatus(false)
-    setloading(true)
-    console.log(match.params.id)
-    async function Jobs(){
-            let All= await  axios.get(`https://jobout1.herokuapp.com/users/job/${match.params.id}/${localStorage.getItem("email")}`)
-            console.log("aa",All,All.data)
-            setall(All.data.post)
-            setUsers(All.data.post.applications)
-            setapplyStatus(All.data.is)
-            setloading(false)
+    console.log("hey2121",match.params.id,userInfo)
+    
+ dispatch(JobDetail(match.params.id,userInfo.email))
             
-            
-   }
-   Jobs()
 },[status])
+
+
 if(loading){return <>
     <div className="spinner-grow text-primary" role="status">
   <span className="sr-only">Loading...</span>
@@ -75,6 +79,8 @@ if(loading){return <>
 <div className="spinner-grow text-dark" role="status">
   <span className="sr-only">Loading...</span>
 </div></>}
+
+else{
     
 return (
       <>
@@ -83,7 +89,7 @@ return (
                   
 <div className="container-fluid mt-4 page-container" id="accordionExample">
 <div className="row d-flex justify-content-around">
-{!all ? (<h1 className="text-primary">No such job</h1>) : (null)}
+{!jobDetail ? (<h1 className="text-primary">No such job</h1>) : (
 
 <>
 <div className="top">
@@ -101,7 +107,7 @@ return (
             <div className="col-lg-6 col-md-6 col-12">                     
                             <h4 className="text-break text-primary ml-2">
 
-                                 <em> {all.title}</em>
+                                 <em> {jobDetail.post.title}</em>
                                 
                             </h4> 
                             <h5 className="text-break  ml-2">
@@ -112,7 +118,7 @@ return (
                             
                             <h6 className="text-break text-primary mt-3 ml-2">
                                
-                                 <em>   {all.description}</em>
+                                 <em>   {jobDetail.post.description}</em>
                             </h6>
                             <h5 className="text-break  ml-2">
 
@@ -122,15 +128,15 @@ return (
 
                             <h6 className="text-break mt-3 ml-2 text-primary">
                                
-                                 <em>   {all.requirements}</em>
+<em>   {jobDetail.post.requirements}</em>
                             </h6>
                             
-                            { (localStorage.getItem("userType")=="user" && (!applyStatus)) ? (<>
+                            { (userInfo.userType=="user" ) ? (<>
                                 <div className="d-flex justify-content-center mb-0">
                                 <button className="btn btnColor text-white rounded-pill mb-2" onClick={handleApply}>Apply</button>
                                 </div>
                             </>):(null)}
-                            {(( localStorage.getItem("userType")=="user") &&( applyStatus))?(<>
+                            {(( userInfo.userType=="user") &&( jobDetail.is))?(<>
                                 <div className="d-flex justify-content-center mb-0">
                                 <h4 className="text-success">Applied</h4>
                                 </div>
@@ -142,18 +148,19 @@ return (
     </div>
 </div>
 </>
+)}
 
 </div>
 </div>
-{localStorage.token && localStorage.userType==="company" && (<>
+{userInfo.userType=="company" && (<>
     <div>
 
-{users.length==0 ? (<h1 className="text-primary text-center">No Applications yet</h1>) : (<h1 className="text-primary text-center"> Applications </h1>)}
+{jobDetail && jobDetail.post.applications.length==0 ? (<h1 className="text-primary text-center">No Applications yet</h1>) : (<h1 className="text-primary text-center"> Applications </h1>)}
 <div className="container-fluid mt-4" id="accordionExample">
 <div className="row d-flex justify-content-around">
-{users.map(ann => {
+{jobDetail && jobDetail.post.applications.map((ann,index) => {
 return(
-    <div key={ann.id} className="col-lg-3 col-md-4 col-10  m-2 text-dark newcard">
+    <div key={index} className="col-lg-3 col-md-4 col-10  m-2 text-dark newcard">
         <img  src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS6-x6CZ8zmUIjSWdlCpLNeoxrKVN3cdsWptg&usqp=CAU" height="100" width="100%"/><br/>
         <h3 className="mb-0 text-uppercase text-center ">
          
@@ -183,7 +190,10 @@ return(
 </>
 
 
+
+
     )
+}
 
 
 }

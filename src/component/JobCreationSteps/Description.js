@@ -24,6 +24,7 @@ export default function Description({match})
           </label>
             <input type="text" name="title" id="title" onChange={(e)=>setDes(e.target.value)}>
             </input>
+            <button className="btn btn-primary mt-3">+</button>
           </li>
           
 

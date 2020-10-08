@@ -1,23 +1,19 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import Header from './Header'
-import axios from 'axios'
-
-import swal from 'sweetalert';
-export default function JobsPosted()
+import Header from '../Header'
+import { useSelector, useDispatch } from 'react-redux';
+import {JobApplied} from '../actions/jobsAction'
+export default function JobsApplied()
 {
-    const [all, setall] = React.useState([]);
-    const [loading,setloading] =React.useState(true)
-    const [status,setstatus] =React.useState(false)
+  const dispatch= useDispatch();
+  const all = useSelector((state) => state.applied);
+  const{loading,error,applied}=all;
+  const userSignin = useSelector(state => state.userSignin);
+  const {  userInfo } = userSignin;
+
     React.useEffect(()=>{
-        setloading(true)
-         async function Jobs(){
-                 let All= await  axios.get(`https://jobout1.herokuapp.com/users/CompanyJobs/${localStorage.getItem("id")}`)
-                 console.log(All)
-                 setall(All.data.jobs)
-                 setloading(false)
-        }
-        Jobs()
+        
+        dispatch(JobApplied(userInfo._id))
     },[])
     if(loading){return <>
         <div className="spinner-grow text-primary" role="status">
@@ -45,13 +41,14 @@ export default function JobsPosted()
       <span className="sr-only">Loading...</span>
     </div></>}
 
+
     return(
  <>
     <Header/>
     <div className="container-fluid mt-4" id="accordionExample">
         <div className="row d-flex justify-content-around">
-            {all.length==0 ? (<h1 className="text-primary">No Jobs Posted yet</h1>) : (null)}
-                {all.map((ann,index) => {
+            {applied && applied.length==0 ? (<h1 className="text-primary">No Jobs Applied yet</h1>) : (null)}
+                {applied && applied.map((ann,index) => {
                     return ( <div key={index} className="col-lg-3 col-md-4 col-8  ml-2 mt-2 mb-2  text-dark newcard">
                                
                                 {
@@ -72,7 +69,7 @@ export default function JobsPosted()
                             Applications <span className="ml-1">{ann.applications.length}</span>
                             </h6>
                            <div className="d-flex justify-content-center">
-                               <Link to={`/JobDetails/${ann._id}/myJobs`}>
+                               <Link to={`/JobDetails/${ann._id}/applied`}>
                                <button className="btn btnColor text-white rounded-pill mb-2" >View Details</button>
                                </Link>
                             
@@ -94,11 +91,3 @@ export default function JobsPosted()
         </>
     )
 }
-
-
-
-
-
-
-
-    
